@@ -298,6 +298,28 @@ h1,h2,h3{font-family:var(--display);font-weight:800;line-height:1.04;letter-spac
 .floaty{animation:floaty 6s ease-in-out infinite}
 .floaty--2{animation-delay:-2s;animation-duration:7s}.floaty--3{animation-delay:-4s;animation-duration:5.5s}
 @keyframes floaty{50%{translate:0 -10px}}
+/* hero slider: one big panel that cycles through every sock */
+.hero__art--slider{height:360px}
+.hero__art--slider .stamp{top:18%;bottom:auto;left:-10px}
+.hs{grid-column:1/-1;grid-row:1/-1;border-radius:var(--r) 80px var(--r) var(--r);background:#fff;touch-action:pan-y}
+.hs__slide{position:absolute;inset:0;margin:0;opacity:0;visibility:hidden;transition:opacity .7s var(--ease),visibility 0s .7s;cursor:pointer}
+.hs__slide.is-on{opacity:1;visibility:visible;transition:opacity .7s var(--ease),visibility 0s 0s;z-index:1}
+.hs__slide img{transform:scale(1.06);transition:transform 4.6s linear}
+.hs__slide.is-on img{transform:scale(1)}
+.calm .hs__slide img{transform:none!important;transition:none}
+@media (prefers-reduced-motion:reduce){.hs__slide img{transform:none!important;transition:none}}
+.hs__cap{position:absolute;z-index:2;left:12px;right:12px;bottom:12px;display:flex;align-items:center;gap:10px;padding:10px 10px 10px 14px;background:rgba(255,255,255,.94);border:3px solid var(--ink);border-radius:16px;box-shadow:4px 4px 0 var(--ink);pointer-events:none}
+.hs__txt{flex:1;min-width:0;line-height:1.2}
+.hs__txt b{display:block;font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hs__txt span{font-size:.82rem;color:var(--orange);font-weight:800}
+.hs__count{font-size:.75rem;font-weight:700;color:var(--ink);opacity:.6;white-space:nowrap;font-variant-numeric:tabular-nums}
+.hs__nav{pointer-events:auto;flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;border:2px solid var(--ink);background:var(--yellow);color:var(--ink);font:800 1rem/1 var(--sans);cursor:pointer}
+.hs__nav:hover{background:var(--orange);color:#fff}
+.hs__nav:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+.hs__bar{position:absolute;z-index:2;left:0;top:0;height:5px;width:100%;background:var(--orange);transform-origin:left;transform:scaleX(0)}
+.hs__bar.run{animation:hsbar var(--hs-t,4s) linear forwards}
+.hs.is-paused .hs__bar.run{animation-play-state:paused}
+@keyframes hsbar{to{transform:scaleX(1)}}
 .sticker--pow{display:none}
 .stamp{position:absolute;z-index:3;width:92px;left:-6px;bottom:-12px;color:var(--ink);filter:drop-shadow(0 8px 18px rgba(29,22,38,.14))}
 .stamp-text{transform-origin:60px 60px;animation:spin 20s linear infinite;font-family:var(--sans);font-weight:700}
@@ -310,6 +332,9 @@ h1,h2,h3{font-family:var(--display);font-weight:800;line-height:1.04;letter-spac
 @media (min-width:900px){
   .hero__grid{grid-template-columns:1.05fr .95fr;align-items:center;gap:56px;padding-top:48px;padding-bottom:90px;min-height:calc(100vh - var(--header) - 36px);max-height:880px}
   .hero__art{height:min(600px,68vh);gap:16px}
+  .hero__art--slider{height:min(600px,68vh)}
+  .hero__art--slider .stamp{top:22%;bottom:auto}
+  .hs__txt b{font-size:1.05rem}
   .stamp{width:124px;left:-40px;bottom:36px}
   .sticker--fox{width:84px;height:84px;right:-26px}
 }
@@ -879,10 +904,17 @@ a.card__media,a.card__body{color:inherit}
       <p class="hero__micro" id="heroMicro"></p>
       <div class="hero__stats" id="heroStats"></div>
     </div>
-    <div class="hero__art" id="heroArt">
-      <div class="panel panel--a"><div class="floaty" style="height:100%"><img src="images/p100.webp" alt="Pikachu and friends crew socks" fetchpriority="high"></div></div>
-      <div class="panel panel--b floaty floaty--2"><img src="images/p415.webp" alt="One Piece Luffy knee-high socks"></div>
-      <div class="panel panel--c floaty floaty--3"><img src="images/p313.webp" alt="Dragon Ball Goku crew socks"></div>
+    <div class="hero__art hero__art--slider" id="heroArt">
+      <div class="panel panel--a hs" id="heroSlider" role="region" aria-roledescription="carousel" aria-label="Featured socks">
+        <div id="hsSlides"><figure class="hs__slide is-on"><img src="images/p100.webp" alt="Pikachu and friends crew socks" fetchpriority="high"></figure></div>
+        <div class="hs__bar" id="hsBar"></div>
+        <div class="hs__cap">
+          <button type="button" class="hs__nav" id="hsPrev" aria-label="Previous">‹</button>
+          <div class="hs__txt" aria-live="polite"><b id="hsName"></b><span id="hsPrice"></span></div>
+          <span class="hs__count" id="hsCount"></span>
+          <button type="button" class="hs__nav" id="hsNext" aria-label="Next">›</button>
+        </div>
+      </div>
       <svg class="stamp" viewBox="0 0 120 120" aria-hidden="true"><defs><path id="stampc" d="M60 60 m-44 0 a44 44 0 1 1 88 0 a44 44 0 1 1 -88 0"/></defs><circle cx="60" cy="60" r="58" fill="#fff"/><g class="stamp-text"><text font-size="9.4" fill="currentColor"><textPath href="#stampc" textLength="272" lengthAdjust="spacing">KITSUNE LAB · ANIME SOCKS · キツネ ·</textPath></text></g><use href="#fox" x="38" y="38" width="44" height="44"/></svg>
       <div class="sticker sticker--fox wobble" style="--rot:8deg"><svg><use href="#fox"/></svg></div>
       <div class="bubble wobble" data-i18n="heroBubble">Pick your fandom!</div>
@@ -1247,6 +1279,58 @@ function cardHTML(p,i=0){
     <a class="card__body" href="#/product/${p.id}"><span class="card__fandom"><i style="background:${fd.c}"></i>${fd.name}</span><h3 class="card__name">${esc(nm(p))}</h3><span class="card__price">${many?(lang==='es'?'Desde ':'From '):''}${fmt(mp)}</span><span class="card__sub">${sub}</span></a>
   </article>`;
 }
+/* ---------- HERO SLIDER: cycles through every sock, most popular first ---------- */
+const HS={list:[...PRODUCTS].sort((a,b)=>(b.pop||0)-(a.pop||0)),i:0,built:false,x0:null};
+const hsAuto=()=>S.motion!=='off';
+function hsEnsure(k){const f=$('#hsSlides').children[k]; if(f&&!f.querySelector('img')) f.innerHTML=`<img src="${img(HS.list[k].id)}" alt="" decoding="async">`;}
+function hsCaption(){
+  const p=HS.list[HS.i], many=packsOf(p).length>1, n=HS.list.length;
+  $('#hsName').textContent=nm(p);
+  $('#hsPrice').textContent=(many?(lang==='es'?'Desde ':'From '):'')+fmt(minPrice(p));
+  $('#hsCount').textContent=`${HS.i+1} / ${n}`;
+  const im=$('#hsSlides').children[HS.i].querySelector('img'); if(im) im.alt=nm(p);
+}
+HS.dur=4000; HS.t=null; HS.left=HS.dur; HS.hold=new Set();
+function hsRun(){clearTimeout(HS.t); HS.t=null; if(!hsAuto()||HS.hold.size||document.hidden)return; HS.start=Date.now(); HS.t=setTimeout(()=>hsShow(HS.i+1),HS.left);}
+function hsHold(why,on){
+  if(on){HS.hold.add(why); if(HS.t){clearTimeout(HS.t); HS.t=null; HS.left=Math.max(300,HS.left-(Date.now()-HS.start));}}
+  else{HS.hold.delete(why); hsRun();}
+  $('#heroSlider').classList.toggle('is-paused',HS.hold.size>0);
+}
+function hsRestart(){const b=$('#hsBar'); b.classList.remove('run'); void b.offsetWidth; HS.left=HS.dur; if(hsAuto()) b.classList.add('run'); hsRun();}
+function hsShow(k){
+  const n=HS.list.length; HS.i=(k+n)%n;
+  [...$('#hsSlides').children].forEach((f,j)=>f.classList.toggle('is-on',j===HS.i));
+  hsEnsure(HS.i); hsEnsure((HS.i+1)%n); hsCaption(); hsRestart();
+}
+function renderHeroSlider(){
+  if(!HS.built){
+    HS.built=true;
+    $('#hsSlides').innerHTML=HS.list.map((p,k)=>`<figure class="hs__slide${k===0?' is-on':''}" data-id="${p.id}">${k===0?`<img src="${img(p.id)}" alt="" fetchpriority="high">`:''}</figure>`).join('');
+    const box=$('#heroSlider');
+    $('#hsPrev').addEventListener('click',()=>hsShow(HS.i-1));
+    $('#hsNext').addEventListener('click',()=>hsShow(HS.i+1));
+    box.addEventListener('mouseenter',()=>hsHold('hover',true));
+    box.addEventListener('mouseleave',()=>hsHold('hover',false));
+    box.addEventListener('focusin',()=>hsHold('focus',true));
+    box.addEventListener('focusout',e=>{if(!box.contains(e.relatedTarget))hsHold('focus',false);});
+    document.addEventListener('visibilitychange',()=>hsHold('tab',document.hidden));
+    box.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')hsShow(HS.i-1); else if(e.key==='ArrowRight')hsShow(HS.i+1);});
+    box.addEventListener('pointerdown',e=>{HS.x0=e.clientX;});
+    box.addEventListener('pointerup',e=>{
+      if(HS.x0==null||e.target.closest('.hs__nav'))return;
+      const dx=e.clientX-HS.x0; HS.x0=null;
+      if(Math.abs(dx)>40) hsShow(HS.i+(dx<0?1:-1));
+      else location.hash='#/product/'+HS.list[HS.i].id;
+    });
+    new MutationObserver(hsRestart).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+    hsShow(0);
+  }
+  $('#heroSlider').setAttribute('aria-label',lang==='es'?'Medias destacadas':'Featured socks');
+  $('#hsPrev').setAttribute('aria-label',lang==='es'?'Anterior':'Previous');
+  $('#hsNext').setAttribute('aria-label',lang==='es'?'Siguiente':'Next');
+  hsCaption();
+}
 function renderStatic(){
   const t=L();
   document.documentElement.lang=lang;
@@ -1262,6 +1346,7 @@ function renderStatic(){
   $('#reviewsSec').hidden=!REVIEWS.length;
   if(REVIEWS.length) $('#reviewsList').innerHTML=REVIEWS.map(r=>`<figure class="why"><blockquote style="margin:0 0 12px;font-weight:600">“${esc(r.text)}”</blockquote><figcaption>${esc(r.name)}${r.product?' · '+esc(r.product):''}</figcaption></figure>`).join('');
   $('#heroTitle').innerHTML=t.title.map(([w,c])=>`<span class="l"><span class="${c}">${w}</span></span>`).join('');
+  renderHeroSlider();
   const maxPairs=Math.max(...PRODUCTS.flatMap(p=>packsOf(p).map(x=>x.pairs)));
   $('#heroStats').innerHTML=[[PRODUCTS.length+'',t.stats[0]],[FANDOMS.length+'',t.stats[1]],['1–'+maxPairs,t.stats[2]]].map(([b,s])=>`<div class="stat"><b>${b}</b><span>${s}</span></div>`).join('');
   $('#fandomList').innerHTML=FANDOMS.map((f,i)=>`<button type="button" class="fandom" data-fandom="${f.id}" style="--c:${f.c};--i:${i%4}" data-reveal><span class="fandom__img"><img src="${img(f.img,1)}" alt="" loading="lazy"></span><span class="fandom__jp">${f.jp}</span><span class="fandom__name">${f.name}<small>${PRODUCTS.filter(p=>p.fandom===f.id).length} ${lang==='es'?'diseños':'designs'}</small></span></button>`).join('');
